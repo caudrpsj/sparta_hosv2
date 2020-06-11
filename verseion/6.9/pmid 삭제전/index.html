@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+
+
+<head>
+
+  <!-- jQuery를 import 합니다 -->
+
+
+
+  <style>
+    .word {
+      margin: 30px auto;
+      width: 700px;
+    }
+
+    .hi {
+      overflow: hidden;
+    }
+
+    .checkbox_center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .checkbox_center2 {
+      
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .button1 {
+      margin: 20px auto;
+      padding: 10px;
+      width: 700px;
+      background-color: purple;
+    }
+
+
+    .word2 {
+      margin: 10px auto;
+      width: 1200px;
+      background-color: grey;
+      padding: 10px;
+      padding-left: 300px;
+    }
+
+    .word3 {
+      margin: 30px auto;
+      width: 100px;
+    }
+
+    .moneystyle {
+      margin: 30px auto;
+      width: 500px;
+    }
+
+    .image2 {
+      width: 30px;
+      height: 30px;
+    }
+  </style>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+  <!-- JQuery를 import 합니다 -->
+
+
+  <script>
+
+    // $(document).ready(function () {
+    //     q2();
+    // });
+
+    function searching() {
+
+
+      let input_search = $('#search_give').val();
+      let input_number = $('#number_give').val();
+
+      if (input_search == "") {
+        alert('검색어를 입력하세요');
+        $('#search_give').focus();
+        return;
+      }
+      else if (input_number == "") {
+        alert('갯수를 입력하세요');
+        $('#number_give').focus();
+        return;
+      }
+      else {
+        $.ajax({
+          type: "POST",
+          url: "/pubmed",
+          data: { search_give: input_search, number_give: input_number },
+          success: function (response) {
+            if (response['result'] == 'success') {
+              alert('검색시작');
+              alert(response['msg']);
+              //             $(document).ready(function () {
+              //   listing();
+              // });
+
+
+            }
+            else { alert('검색실패'); }
+          }
+        });
+
+      }
+
+
+
+
+
+
+    }
+
+  </script>
+
+
+
+
+  <!-- JQuery를 import 합니다 -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
+  <script>
+
+    // function q2() {
+
+    //   $('#money').empty();
+    //   $('#money2').empty();
+    //   $.ajax({
+    //     type: "GET",
+    //     url: "https://api.manana.kr/exchange/rate.json",
+    //     data: {},
+    //     success: function (response) {
+
+    //       let money_temp = response["1"]["rate"];
+    //       let money_temp2 = response["2"]["rate"] * 100;
+    //       let money_temp3 = money_temp2.toFixed(2);
+
+    //       $('#money').append(money_temp);
+    //       $('#money2').append(money_temp3);
+
+    //     }
+    //   });
+
+    // }
+
+    // $(document).ready(function () {
+    //   listing();
+    // });
+
+    function alldownload() {
+
+    }
+function downloadeach(pmid){
+
+  $.ajax({
+          type: "POST",
+          url: "/download",
+          data: { pmid_give: pmid},
+          success: function (response) {
+            if (response['result'] == 'success') {
+              
+              alert(response['msg']);
+              //             $(document).ready(function () {
+              //   listing();
+              // });
+
+
+            }
+            else { alert('다운로드실패'); }
+          }
+        });
+
+
+
+}
+    function listing() {
+      $('#accordionExample2').html('');
+      let articleslist = '';
+      $.ajax({
+        type: "GET",
+        url: "/pubmed",
+        data: {},
+        success: function (response) {
+          if (response['result'] == 'success') {
+
+            articleslist = response['articles'];
+            for (let i = 0; i < articleslist.length; i++) {
+
+              make_list(articleslist[i]['abstract'], articleslist[i]['title'], articleslist[i]['DOI'], articleslist[i]['PMID'],articleslist[i]['journal']);
+            }
+          } else {
+            alert('논문을 받아오지 못했습니다');
+          }
+        }
+      })
+
+    };
+    // style='zoom:2.0'
+    function make_list(abstract, title, doi, pmid,journal) {
+
+
+      let make_show = `
+      <div class="accordion col-xl-11 " id="accordionExample3" style= "margin: auto">
+          <div class="accordion col-xl-25" id="accordionExample1" style= "margin: auto">
+            <div class="card" style= "margin: auto">
+              <div class="card-header" id="heading${pmid}" style = "padding: 3px;background-color : black " >
+                <h2 class="mb-0">
+
+
+                  <div class="row">
+                    <div class="col-sm-1 ">
+                      <div class="checkbox_center">
+                        <input type="checkbox"  style='zoom:2.0' aria-label="Checkbox for following text input" id="checkbox('${pmid}')">    
+                      </div>
+                    </div>
+                    <div class="col-8">
+                      <button class="btn btn-link btn-block text-left checkbox_center" type="button" data-toggle="collapse"
+                        data-target="#collapse${pmid}" aria-expanded="true" aria-controls="collaps${pmid}e">
+                        <div class =" hi " style="color: white; font-weight: bold ">
+                          
+                        ${title}
+
+                        </div>
+                      </button>
+                    </div>
+                    <div class="col-1 ">
+                      <div class = "checkbox_center">
+                      <h6 style="color: red;">${pmid}</h6>
+                      </div>
+                    </div>
+                    <div class="col-1 ">
+                      <button type="button" class="btn btn-warning" onclick="downloadeach('${pmid}')">download</button>
+                    </div>
+
+                  </div>
+
+                </h2>
+              </div>
+
+              <div id="collapse${pmid}" class="collapse show" aria-labelledby="heading${pmid}" data-parent="#accordionExample">
+                <div class="card-body">
+                  <h5 style="color: black; font-weight: 500 " >${title}</h5>
+                  
+                  <h7 style="color: white-smoke; font-weight: 500; font-style: italic " >${journal}</h7>
+                <h5 style="color: grey; font-weight: bold " >Abstract</h5>
+                  ${abstract}
+                  <br> <br>
+                  <h8 style="color: black; " >PMID : ${pmid}</h8>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+         
+        `
+
+      $('#accordionExample2').append(make_show);
+    };
+
+  </script>
+
+  <!-- 파일 분리를 위한 코드 -->
+  <!-- <link href="shop.css" rel="stylesheet"> 
+      <script src="shop.js"></script> 
+    -->
+
+
+  <title>수정스 펍메드 분해하기</title>
+
+
+
+</head>
+
+<body>
+  <hr>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Su jung's project</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+      aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Features</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Pricing</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Dropdown link
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Another action</a>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <hr>
+  <div class="word2">
+    
+    <form class="form-inline my-2 my-lg-0" >
+      
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="search_give">
+      <input class="form-control mr-sm-2" type="number" placeholder="number" aria-label="number" id="number_give">
+
+      <!-- 버트 부분 -------------- -->
+
+      <button type="button" class="btn btn-primary" onclick="searching()">Search</button>
+      <button type="button" class="btn btn-success" onclick="listing()">listing</button>
+      <button type="button" class="btn btn-danger">Reset</button>
+
+    </form>
+ 
+  </div>
+  <hr>
+  <div class="button1 ">
+
+    <button type="button" class="btn btn-dark" onclick="alldownload()"> All download</button>
+
+  </div>
+  <hr>
+
+
+  <div class="container">
+    <div class="row flex-xl-nowrap" id="accordionExample">
+
+      <div class="col-xl-11 col-xl-11 " style="margin: 2px auto; padding: 2px;" >
+        <div id="accordionExample2" style = "padding: 3px">
+
+        <!-- 묶음 -->
+
+        <div class="accordion" id="accordionExample3">
+          <div class="accordion" id="accordionExample1">
+            <div class="card">
+              <div class="card-header" id="headingOne" style=" background-color : white">
+                <h2 class="mb-0">
+
+
+                  <div class="row">
+                    <div class="col-sm-1 ">
+                      <div class="checkbox_center">
+                        <input type="checkbox"  aria-label="Checkbox for following text input">
+                      </div>
+                    </div>
+                    <div class="col-8">
+                      <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
+                        data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <div class = "checkbox_center">
+                        
+                        Title
+                       
+                      </div>
+                      </button>
+                    </div>
+                    <div class="col-10 col-sm-1">
+                      <div class = "checkbox_center">
+                      <h6>PMID</h6>
+                    </div>
+                    </div>
+                    <div class="col-sm-1  ">
+                      <button type="button" class="btn btn-warning" onclick="downloadeach()">download</button>
+                    </div>
+
+                  </div>
+
+                </h2>
+              </div>
+
+              <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body">
+                  Abstract
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- 묶음 -->
+
+
+
+      </div>
+    </div>
+    </div>
+  </div>
+  </div>
+  <hr>
+  <!-- 묶음 -->
+</body>
+
+</html>
