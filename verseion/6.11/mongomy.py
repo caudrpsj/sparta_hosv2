@@ -13,17 +13,23 @@ data = requests.get('https://pubmed.ncbi.nlm.nih.gov/?term=onychomatricoma&size=
 soup = BeautifulSoup(data.text, 'html.parser')
 #//*[@id="search-results"]/section/div[1]/div/article[1]/div[2]/div[1]/div[1]/span[3]/text()
 # select를 이용해서, tr들을 불러오기
+#/html/body/main/div[9]/div[2]/section/div[1]/div/article[1]/div[2]/div[1]/div[1]/span[5]/span
 pubmeds = soup.select('#search-results > section > div.search-results-chunks > div > article.labs-full-docsum')
 # pubmeds = soup.select('#search-results > section > div.search-results-chunks > div > article.labs-full-docsum > div.docsum-content > div.labs-docsum-citation full-citation')
 # movies (tr들) 의 반복문을 돌리기
 num = 0
+idlist = list()
 for pubmeds_in in pubmeds:
     num  += 1
     # movie 안에 a 가 있으면,
-    a_tag = pubmeds_in.select_one('div.docsum-wrap > div.docsum-content > div >span:nth-child(3)')
-    b_tag = a_tag.text
+    a_tag = pubmeds_in.select_one('div.docsum-wrap > div.docsum-content > div >span:nth-child(5)')
+    b_tag = a_tag.text.split(': ')[1]
     # print (b_tag)
-    doi_split = b_tag.split('doi:')[1].split('. ')[0]
-    print (num, doi_split)
+    # doi_split = b_tag.split('doi:')[1].split('. ')[0]
+    print (b_tag)
     # if a_tag is not None:
     #     print(a_tag.text)
+    idlist.append(b_tag)
+    if num == number_receive:
+        break
+return idlist
